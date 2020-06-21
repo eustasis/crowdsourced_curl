@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -11,25 +5,19 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import linear_kernel
 
-
-# In[4]:
-
-
-df1 = pd.read_csv(r'C:\Users\mupsi\Desktop\crowdsourced_curl\full_reddit_dataset_ec2_18jun.csv', dtype='string')
-
-
+#import dataset, choose only relevant columns
+df1 = pd.read_csv(r'reddit_dataset', dtype='string')
 df2 = df1[['author', 'id', 'permalink', 'created_utc', 'text_body', 'parent_id', 'hairtype', 'num_comments','num_crossposts', 'selftext', 'title', 'lemmatized_txt']]
 
 
-# In[2]:
-
-
-cust_stopwords = text.ENGLISH_STOP_WORDS.union(['2a','2b','2c','3a','3b','3c','4a','4b','4c','just','ve','wa','don','using','really','routine','know','ha','cg','amp','work','try','used','notext','make','low','year','love','think','help','type','need','cut','lot','week','maybe','sure'])
+# instantiate vectorizer with custom stopwords
+cust_stopwords = text.ENGLISH_STOP_WORDS.union(['2a','2b','2c','3a','3b','3c','4a','4b','4c'])
 tfidf = TfidfVectorizer(stop_words=cust_stopwords, tokenizer=None)
 
 st.title("The Crowdsourced Curl")
 st.subheader("Find the product that's right for your curls using thousands of posts from r/curlyhair")
 
+# function to re-vectorize search term along with each reddit post, return search results as a df with the post (text & title = 'text_body'), associated hairtype, and permalink to the original post
 def curl_query(str):   
 	df = df2
 	df.append=['author', 'id', 'permalink', 'created_utc', 'text_body', 'parent_id','hairtype', 'num_comments','num_crossposts', 'selftext', 'title', str]
@@ -48,7 +36,7 @@ def curl_query(str):
 		return output
 		#st.write(output.astype('object'))
 
-
+# searchbox for user input & hairtype filter
 searchtext = st.text_input("What product would you like to learn about?")
 hairtypes = df2['hairtype'].unique()
 
