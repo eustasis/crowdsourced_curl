@@ -1,4 +1,4 @@
-# crowdsourced_curl
+# The Crowdsourced Curl
  Create a TF-IDF search function to search r/curlyhair posts for product information based on your hairtype. This project was developed using data scraped from PushShift. The dataset here has:
  - already been scraped
  - been labeled with associated hairtypes for each post
