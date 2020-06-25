@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import linear_kernel
+from PIL import Image
 
 
 # In[4]:
@@ -37,7 +38,9 @@ stream_dataset = load_csv(path)
 
 st.title("The Crowdsourced Curl")
 st.subheader("Find the product that's right for your curls using thousands of posts from r/curlyhair")
-
+image = Image.open(r'C:\Users\mupsi\Desktop\crowdsourced_curl\hair_types.png')
+st.sidebar.title("Check your curl type here: ")
+st.sidebar.image(image, use_column_width=True)
 
 
 #output_choice = output[output['hairtype'].isin(hairtype_choice)]
@@ -59,9 +62,9 @@ def curl_query(product, stream_dataset, tfidf):
         
     if len(top_docs)>1:
         top_output = df_dum.loc[top_docs]
-        output = top_output[['Hairtype', 'Text','First_Topic', 'Second_Topic', 'Third_Topic', 'Fourth_Topic','Link']]
+        output = top_output[['Hairtype', 'Text','First_Topic', 'Second_Topic', 'Third_Topic', 'Fourth_Topic']]
         output = output.sort_values(by=['Hairtype'])
-        st.write("Hover your mouse over the post to read the whole thing. \r Scroll to see what the main topics covered in the post are. \r Click the permalink to go to the original post.")
+        st.write("Hover your mouse over the post to read the whole post. \r Scroll to see the four main topics covered in the post.")
         st.write(output)
     else:
         st.write("No results found; try a different search!")
@@ -73,11 +76,12 @@ if searchtext:
     search_results
 
     topics = stream_dataset['Third_Topic'].unique()
-    topic_choice = st.multiselect("Filter by topic",topics)
+    topic_choice = st.multiselect("Filter by topic: ",topics)
     if st.button("Submit"):
-        st.write('ok')
+        search_results = stream_dataset.loc[stream_dataset['First_Topic'].isin(topic_choice)\
+                              | stream_dataset['Second_Topic'].isin(topic_choice)\
+                             | stream_dataset['Third_Topic'].isin(topic_choice)\
+                             | stream_dataset['Fourth_Topic'].isin(topic_choice)]
+        st.write(search_results[['Hairtype','Text','Link']].astype('object'))
     else:
-        st.write('You can select more than one!')
-
-        
-    
+        st.write(' ')
