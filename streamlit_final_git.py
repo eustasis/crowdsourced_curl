@@ -21,7 +21,7 @@ stream_dataset = load_csv(path)
 
 st.title("The Crowdsourced Curl")
 st.subheader("Find the product that's right for your curls using thousands of posts from r/curlyhair")
-image = Image.open(r'C:\Users\mupsi\Desktop\crowdsourced_curl\hair_types.png')
+image = Image.open(r'~hair_types.png')
 st.sidebar.title("Check your curl type here: ")
 st.sidebar.image(image, use_column_width=True)
 
