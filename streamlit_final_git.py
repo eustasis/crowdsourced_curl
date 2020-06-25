@@ -6,7 +6,7 @@ from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import linear_kernel
 from PIL import Image
 
-path = (r'~sample_dataset_for_app.csv')
+path = (r'C:\Users\mupsi\Desktop\crowdsourced_curl\full_dataset_topics_24jun2.csv')
 def load_csv(path):
     df1 = pd.read_csv(path, dtype='string')
     df2 = df1[['Link', 'Text', 'Hairtype','lemmatized_txt',  'First_Topic', 'Second_Topic', 'Third_Topic', 'Fourth_Topic']]
@@ -21,9 +21,6 @@ stream_dataset = load_csv(path)
 
 st.title("The Crowdsourced Curl")
 st.subheader("Find the product that's right for your curls using thousands of posts from r/curlyhair")
-image = Image.open(r'~hair_types.png')
-st.sidebar.title("Check your curl type here: ")
-st.sidebar.image(image, use_column_width=True)
 
 def curl_query(product, stream_dataset, tfidf):
     """
@@ -39,29 +36,59 @@ def curl_query(product, stream_dataset, tfidf):
     for i in related_docs:
         top_docs = []
         top_docs.extend(i)
-        
-    if len(top_docs)>1:
+
+    if len(top_docs) == 0:
+        st.write("No results")
+    else:
         top_output = df_dum.loc[top_docs]
         output = top_output[['Hairtype', 'Text','First_Topic', 'Second_Topic', 'Third_Topic', 'Fourth_Topic']]
         output = output.sort_values(by=['Hairtype'])
-        st.write("Hover your mouse over the post to read the whole post. \r Scroll to see the four main topics covered in the post.")
+        st.write("Posts are sorted by hair type. Hover your mouse over the post to read the whole post. Scroll to see the four main topics covered in the post.")
         st.write(output)
-    else:
-        st.write("No results found; try a different search!")
-
+        return(output)
+    
 searchtext = st.text_input("What product would you like to learn about?")
 
 if searchtext:
     search_results = curl_query(searchtext, stream_dataset, tfidf)
-    search_results
+    
+    image = Image.open(r'C:\Users\mupsi\Desktop\crowdsourced_curl\hair_types.png')
+    st.sidebar.subheader("Don't know your hair type? Check here: ")
+    st.sidebar.image(image, width=450)
 
     topics = stream_dataset['Third_Topic'].unique()
-    topic_choice = st.multiselect("Filter by topic: ",topics)
-    if st.button("Submit"):
-        search_results = stream_dataset.loc[stream_dataset['First_Topic'].isin(topic_choice)\
-                              | stream_dataset['Second_Topic'].isin(topic_choice)\
-                             | stream_dataset['Third_Topic'].isin(topic_choice)\
-                             | stream_dataset['Fourth_Topic'].isin(topic_choice)]
-        st.write(search_results[['Hairtype','Text','Link']].astype('object'))
+    topic_choice = st.multiselect("Filter by topic: ", topics)
+
+               
+    if st.button("Submit topic filter"):
+            search_results= search_results.loc[search_results['First_Topic'].isin(topic_choice)\
+            | search_results['Second_Topic'].isin(topic_choice) |search_results['Third_Topic'].isin(topic_choice)\
+                                                      | search_results['Fourth_Topic'].isin(topic_choice)]
+            st.write(search_results)
     else:
-        st.write(' ')
+        st.write(" ")
+else:
+    st.write(" ")
+
+
+ ########## to filter by hairtype: not necessary given hairtype column: ##########   
+    
+#    image = Image.open(r'C:\Users\mupsi\Desktop\crowdsourced_curl\hair_types.png')
+#    st.subheader("Check your hair type and filter your results: ")
+#    st.image(image, width=450)#
+
+#    hairtypes = search_results['Hairtype'].unique()
+#    hairtype_choice = st.multiselect('',hairtypes)
+    
+#    if st.button("Submit hair type"):
+#        search_results_hair = search_results[search_results['Hairtype'].isin(hairtype_choice)]
+ #       st.write(search_results_hair)
+        
+#        topics = stream_dataset['Third_Topic'].unique()
+#        topic_choice = st.multiselect("Filter by topic: ", topics)
+#                
+#        if st.button("Submit topic filter"):
+#            search_results_hair_topic = search_results_hair.loc[search_results['First_Topic'].isin(topic_choice)| search_results_hair['Second_Topic'].isin(topic_choice) |search_results_hair['Third_Topic'].isin(topic_choice)| search_results_hair['Fourth_Topic'].isin(topic_choice)]
+#            st.write(search_results_hair_topic, astype('object'))
+#else:
+#    st.write('')
