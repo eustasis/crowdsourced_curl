@@ -6,8 +6,8 @@ from sklearn.feature_extraction import text
 from sklearn.metrics.pairwise import linear_kernel
 from PIL import Image
 
-path = (r'C:\Users\mupsi\Desktop\crowdsourced_curl\full_dataset_topics_24jun2.csv')
-def load_csv(path=r'C:\Users\mupsi\Desktop\crowdsourced_curl\full_dataset_topics_24jun2.csv'):
+path = (r'~sample_dataset_for_app.csv')
+def load_csv(path):
     df1 = pd.read_csv(path, dtype='string')
     df2 = df1[['Link', 'Text', 'Hairtype','lemmatized_txt',  'First_Topic', 'Second_Topic', 'Third_Topic', 'Fourth_Topic']]
     return df2
